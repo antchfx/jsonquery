@@ -127,7 +127,7 @@ func parseValue(x interface{}, top *Node, level int) {
 		n := &Node{Data: v, Type: TextNode, level: level}
 		addNode(n)
 	case float64:
-		s := strconv.FormatFloat(v, 'f', -1, 32)
+		s := strconv.FormatFloat(v, 'f', -1, 64)
 		n := &Node{Data: s, Type: TextNode, level: level}
 		addNode(n)
 	case bool:

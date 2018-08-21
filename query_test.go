@@ -43,20 +43,20 @@ func TestNavigator(t *testing.T) {
 	}
 	// Move to first child(age).
 	if e, g := true, nav.MoveToChild(); e != g {
-		t.Fatalf("expected %s but %s", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	if e, g := "age", nav.Current().Data; e != g {
-		t.Fatalf("expected %s but %s", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	if e, g := "30", nav.Value(); e != g {
-		t.Fatalf("expected %s but %s", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	// Move to next sibling node(cars).
 	if e, g := true, nav.MoveToNext(); e != g {
-		t.Fatalf("expected %b but %b", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	if e, g := "cars", nav.Current().Data; e != g {
-		t.Fatalf("expected %s but %s", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	m := make(map[string][]string)
 	// Move to cars child node.
@@ -64,25 +64,25 @@ func TestNavigator(t *testing.T) {
 	for ok := nav.MoveToChild(); ok; ok = nav.MoveToNext() {
 		// Move to <element> node.
 		// <element><models>...</models><name>Ford</name></element>
-		cur_1 := nav.Copy()
+		cur1 := nav.Copy()
 		var name string
 		var models []string
 		// name || models
 		for ok := nav.MoveToChild(); ok; ok = nav.MoveToNext() {
-			cur_2 := nav.Copy()
+			cur2 := nav.Copy()
 			n := nav.Current()
 			if n.Data == "name" {
 				name = n.InnerText()
 			} else {
 				for ok := nav.MoveToChild(); ok; ok = nav.MoveToNext() {
-					cur_3 := nav.Copy()
+					cur3 := nav.Copy()
 					models = append(models, nav.Value())
-					nav.MoveTo(cur_3)
+					nav.MoveTo(cur3)
 				}
 			}
-			nav.MoveTo(cur_2)
+			nav.MoveTo(cur2)
 		}
-		nav.MoveTo(cur_1)
+		nav.MoveTo(cur1)
 		m[name] = models
 	}
 	expected := []struct {
@@ -94,23 +94,23 @@ func TestNavigator(t *testing.T) {
 	}
 	for _, v := range expected {
 		if e, g := v.value, strings.Join(m[v.name], ","); e != g {
-			t.Fatalf("expected %s=%s,but %s=%s", v.name, e, v.name, g)
+			t.Fatalf("expected %v=%v,but %v=%v", v.name, e, v.name, g)
 		}
 	}
 	nav.MoveTo(cur)
 	// move to name.
 	if e, g := true, nav.MoveToNext(); e != g {
-		t.Fatalf("expected %b but %b", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	// move to cars
 	nav.MoveToPrevious()
 	if e, g := "cars", nav.Current().Data; e != g {
-		t.Fatalf("expected %s but %s", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	// move to age.
 	nav.MoveToFirst()
 	if e, g := "age", nav.Current().Data; e != g {
-		t.Fatalf("expected %s but %s", e, g)
+		t.Fatalf("expected %v but %v", e, g)
 	}
 	nav.MoveToParent()
 	if g := nav.Current().Type; g != DocumentNode {
