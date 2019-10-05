@@ -46,6 +46,8 @@ doc, err := jsonquery.Parse(f)
 list := jsonquery.Find(doc, "store/book/*/author")
 // or equal to
 list := jsonquery.Find(doc, "//author")
+// or by QueryAll()
+nodes, err := jsonquery.QueryAll(doc, "//a")
 ```
 
 #### Find the third book.
@@ -72,7 +74,7 @@ list := jsonquery.Find(doc, "//book/*[isbn]")
 list := jsonquery.Find(doc, "//book/*[price<10]")
 ```
 
-Quick Tutorial
+Examples
 ===
 
 ```go
@@ -96,7 +98,10 @@ func main() {
 		  }
 		]
 	}`
-	doc, _ := jsonquery.Parse(strings.NewReader(s))
+	doc, err := jsonquery.Parse(strings.NewReader(s))
+	if err != nil {
+		panic(err)
+	}
 	name := jsonquery.FindOne(doc, "name")
 	fmt.Printf("name: %s\n", name.InnerText())
 	var a []string
@@ -160,7 +165,7 @@ The above JSON document will be convert to similar to XML document by the *JSONQ
 
 Notes: `element` is empty element that have no any name.
 
-List of supported XPath query packages
+List of XPath query packages
 ===
 |Name |Description |
 |--------------------------|----------------|
