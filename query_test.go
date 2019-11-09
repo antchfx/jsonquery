@@ -7,6 +7,20 @@ import (
 	"github.com/antchfx/xpath"
 )
 
+func BenchmarkSelectorCache(b *testing.B) {
+	DisableSelectorCache = false
+	for i := 0; i < b.N; i++ {
+		getQuery("/AAA/BBB/DDD/CCC/EEE/ancestor::*")
+	}
+}
+
+func BenchmarkDisableSelectorCache(b *testing.B) {
+	DisableSelectorCache = true
+	for i := 0; i < b.N; i++ {
+		getQuery("/AAA/BBB/DDD/CCC/EEE/ancestor::*")
+	}
+}
+
 func TestNavigator(t *testing.T) {
 	s := `{
 		"name":"John",

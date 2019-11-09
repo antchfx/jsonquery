@@ -8,14 +8,15 @@ jsonquery
 Overview
 ===
 
-jsonquery is an XPath query package for JSON document, lets you extract data from JSON documents through an XPath expression.
+jsonquery is an XPath query package for JSON document, lets you extract data from JSON documents through an XPath expression. Built-in XPath expression cache avoid re-compile XPath expression each query.
 
 Getting Started
 ===
 
 ### Install Package
-
-> $ go get github.com/antchfx/jsonquery
+```
+go get github.com/antchfx/jsonquery
+```
 
 #### Load JSON document from URL.
 
