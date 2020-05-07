@@ -63,13 +63,13 @@ book := jsonquery.Find(doc, "//book/*[3]")
 book := jsonquery.Find(doc, "//book/*[last()]")
 ```
 
-#### Find all books with isbn number.
+#### Find all books that have an isbn number.
 
 ```go
 list := jsonquery.Find(doc, "//book/*[isbn]")
 ```
 
-#### Find all books cheapier than 10.
+#### Find all books priced less than 10.
 
 ```go
 list := jsonquery.Find(doc, "//book/*[price<10]")
@@ -118,7 +118,7 @@ func main() {
 
 Implement Principle
 ===
-If you are familiar with XPath and XML, you can quick start to known how 
+If you are familiar with XPath and XML, you can easily figure out how to
 write your XPath expression.
 
 ```json
