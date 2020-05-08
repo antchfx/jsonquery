@@ -60,6 +60,39 @@ func (n *Node) InnerText() string {
 	return buf.String()
 }
 
+func outputXML(buf *bytes.Buffer, n *Node) {
+	switch n.Type {
+	case ElementNode:
+		if n.Data == "" {
+			buf.WriteString("<element>")
+		} else {
+			buf.WriteString("<" + n.Data + ">")
+		}
+	case TextNode:
+		buf.WriteString(n.Data)
+		return
+	}
+
+	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		outputXML(buf, child)
+	}
+	if n.Data == "" {
+		buf.WriteString("</element>")
+	} else {
+		buf.WriteString("</" + n.Data + ">")
+	}
+}
+
+// OutputXML prints the XML string.
+func (n *Node) OutputXML() string {
+	var buf bytes.Buffer
+	buf.WriteString(`<?xml version="1.0"?>`)
+	for n := n.FirstChild; n != nil; n = n.NextSibling {
+		outputXML(&buf, n)
+	}
+	return buf.String()
+}
+
 // SelectElement finds the first of child elements with the
 // specified name.
 func (n *Node) SelectElement(name string) *Node {
