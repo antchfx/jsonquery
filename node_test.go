@@ -1,6 +1,10 @@
 package jsonquery
 
 import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
+	"path"
 	"sort"
 	"strings"
 	"testing"
@@ -173,5 +177,82 @@ func TestLargeFloat(t *testing.T) {
 	n := doc.SelectElement("large_number")
 	if n.InnerText() != "365823929453" {
 		t.Fatalf("expected %v but %v", "365823929453", n.InnerText())
+	}
+}
+
+func TestJSON(t *testing.T) {
+	files := []string{
+		"basic.json",
+		"screen_v3_01.json",
+		"screen_v3_02.json",
+		"screen_v3_03.json",
+		"screen_v3_04.json",
+	}
+
+	for _, file := range files {
+		t.Run(file, func(t *testing.T) {
+			originalBytes, err := ioutil.ReadFile(path.Join("testdata", file))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var iOriginalJSON interface{}
+			err = json.NewDecoder(bytes.NewReader(originalBytes)).Decode(&iOriginalJSON)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			doc, err := Parse(bytes.NewReader(originalBytes))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			iDocJSON, err := doc.JSON()
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			originalJSONBytes, err := json.Marshal(iOriginalJSON)
+			if err != nil {
+				t.Fatal(err)
+			}
+			docJSONBytes, err := json.Marshal(iDocJSON)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if string(originalJSONBytes) != string(docJSONBytes) {
+				t.Fatalf(
+					"JSON from doc is different from original JSON \nOriginal: %s \nDoc:      %s",
+					string(originalJSONBytes),
+					string(docJSONBytes),
+				)
+			}
+		})
+	}
+}
+
+func TestFindAssetIDs(t *testing.T) {
+	originalBytes, err := ioutil.ReadFile(path.Join("testdata", "screen_v3_01.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	doc, err := Parse(bytes.NewReader(originalBytes))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	strAssetIDs := []string{"4629", "4627", "4631", "4630"}
+	nodes := Find(doc, "/layers//exportOptions//asset_id")
+	if n := len(nodes); n != 4 {
+		t.Fatalf("Expected 4 nodes but got only %v", n)
+	}
+	for i, n := range nodes {
+		if n.Data != "asset_id" {
+			t.Fatalf("Expected asset_id but got %s", n.Data)
+		}
+		if n.InnerText() != strAssetIDs[i] {
+			t.Fatalf("Expected %s but got %s", strAssetIDs[i], n.InnerText())
+		}
 	}
 }

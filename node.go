@@ -3,6 +3,7 @@ package jsonquery
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -12,6 +13,8 @@ import (
 
 // A NodeType is the type of a Node.
 type NodeType uint
+
+type contentType string
 
 const (
 	// DocumentNode is a document object that, as the root of the document tree,
@@ -23,6 +26,14 @@ const (
 	TextNode
 )
 
+const (
+	arrayType = contentType("array")
+	objectType = contentType("object")
+	stringType = contentType("string")
+	float64Type = contentType("float64")
+	boolType = contentType("bool")
+)
+
 // A Node consists of a NodeType and some Data (tag name for
 // element nodes, content for text) and are part of a tree of Nodes.
 type Node struct {
@@ -31,7 +42,8 @@ type Node struct {
 	Type NodeType
 	Data string
 
-	level int
+	level       int
+	contentType contentType
 }
 
 // ChildNodes gets all child nodes of the node.
@@ -93,6 +105,39 @@ func (n *Node) OutputXML() string {
 	return buf.String()
 }
 
+func (n *Node) JSON() (interface{}, error) {
+	switch n.contentType {
+	case arrayType:
+		arr := make([]interface{}, 0)
+		for _, node := range n.ChildNodes() {
+			value, err := node.JSON()
+			if err != nil {
+				return nil, err
+			}
+			arr = append(arr, value)
+		}
+		return arr, nil
+	case objectType:
+		obj := map[string]interface{}{}
+		for _, node := range n.ChildNodes() {
+			value, err := node.JSON()
+			if err != nil {
+				return nil, err
+			}
+			obj[node.Data] = value
+		}
+		return obj, nil
+	case float64Type:
+		return strconv.ParseFloat(n.InnerText(), 64)
+	case stringType:
+		return n.InnerText(), nil
+	case boolType:
+		return strconv.ParseBool(n.InnerText())
+	}
+
+	return nil, fmt.Errorf("%v type is not supported", n.contentType)
+}
+
 // SelectElement finds the first of child elements with the
 // specified name.
 func (n *Node) SelectElement(name string) *Node {
@@ -136,14 +181,19 @@ func parseValue(x interface{}, top *Node, level int) {
 			}
 		}
 	}
+
 	switch v := x.(type) {
 	case []interface{}:
+		top.contentType = arrayType
+
 		for _, vv := range v {
 			n := &Node{Type: ElementNode, level: level}
 			addNode(n)
 			parseValue(vv, n, level+1)
 		}
 	case map[string]interface{}:
+		top.contentType = objectType
+
 		// The Go’s map iteration order is random.
 		// (https://blog.golang.org/go-maps-in-action#Iteration-order)
 		var keys []string
@@ -157,13 +207,19 @@ func parseValue(x interface{}, top *Node, level int) {
 			parseValue(v[key], n, level+1)
 		}
 	case string:
+		top.contentType = stringType
+
 		n := &Node{Data: v, Type: TextNode, level: level}
 		addNode(n)
 	case float64:
+		top.contentType = float64Type
+
 		s := strconv.FormatFloat(v, 'f', -1, 64)
 		n := &Node{Data: s, Type: TextNode, level: level}
 		addNode(n)
 	case bool:
+		top.contentType = boolType
+
 		s := strconv.FormatBool(v)
 		n := &Node{Data: s, Type: TextNode, level: level}
 		addNode(n)
@@ -175,7 +231,15 @@ func parse(b []byte) (*Node, error) {
 	if err := json.Unmarshal(b, &v); err != nil {
 		return nil, err
 	}
+
 	doc := &Node{Type: DocumentNode}
+	switch v.(type) {
+	case []interface{}:
+		doc.contentType = arrayType
+	case map[string]interface{}:
+		doc.contentType = objectType
+	}
+
 	parseValue(v, doc, 1)
 	return doc, nil
 }
