@@ -1,0 +1,47 @@
+{
+  "emptyObj": {},
+  "emptyArr": [],
+  "emptyInt": 0,
+  "emptyStr": "",
+  "int": 1,
+  "str": "foo",
+  "simpleObj": {
+    "foo": "foo1",
+    "bar": "bar1"
+  },
+  "nestedObj": {
+    "foo": "foo2",
+    "anotherObj": {
+      "bar": "bar2",
+      "arr": [1, 2],
+      "obj": {
+        "foo": "bar"
+      }
+    }
+  },
+  "nestedArr": [
+    0,
+    [1, 2],
+    {
+      "simpleObj": {
+        "foo": "foo1",
+        "bar": "bar1"
+      }
+    },
+    {
+      "nestedObj": {
+        "foo": "foo2",
+        "anotherObj": {
+          "bar": "bar2",
+          "arr": [
+            1,
+            2
+          ],
+          "obj": {
+            "foo": "bar"
+          }
+        }
+      }
+    }
+  ]
+}

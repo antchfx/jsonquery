@@ -1,0 +1,558 @@
+{
+  "_id": {
+    "$oid": "5f2af841780d39cd9302e072"
+  },
+  "__exportedImagePaths": [
+    {
+      "pageID": "B9B06CE4-3A85-4866-884F-79A1001A81C1",
+      "fullPath": "/var/folders/nz/g38hlwc55hx46m3ll425cnqc0000gn/T/com.invisionlabs.CraftManager/SketchPublisher/80A68998-240B-4FCA-89B3-541295795042-523-00006B5FAF18D5B6/output/50D2E38C-A3D4-4CF4-BD53-104735859767/Page 1/Artboard-01/Group/Line.png",
+      "layerNameFormatted": "Line",
+      "layerPath": "Page 1/Artboard-01/Group",
+      "layerName": "Line",
+      "originalObjectID": "",
+      "symbolAsset": false,
+      "key": ".png",
+      "objectID": "6E310C89-FBBC-4E8A-9294-095148E9DB59"
+    },
+    {
+      "pageID": "B9B06CE4-3A85-4866-884F-79A1001A81C1",
+      "fullPath": "/var/folders/nz/g38hlwc55hx46m3ll425cnqc0000gn/T/com.invisionlabs.CraftManager/SketchPublisher/80A68998-240B-4FCA-89B3-541295795042-523-00006B5FAF18D5B6/output/50D2E38C-A3D4-4CF4-BD53-104735859767/Page 1/Artboard-01/Triangle.png",
+      "layerNameFormatted": "Triangle",
+      "layerPath": "Page 1/Artboard-01",
+      "layerName": "Triangle",
+      "originalObjectID": "",
+      "symbolAsset": false,
+      "key": ".png",
+      "objectID": "E9F7B7EF-2F8C-418A-934A-6AD07CC6E0DA"
+    },
+    {
+      "pageID": "B9B06CE4-3A85-4866-884F-79A1001A81C1",
+      "fullPath": "/var/folders/nz/g38hlwc55hx46m3ll425cnqc0000gn/T/com.invisionlabs.CraftManager/SketchPublisher/80A68998-240B-4FCA-89B3-541295795042-523-00006B5FAF18D5B6/output/50D2E38C-A3D4-4CF4-BD53-104735859767/Page 1/Artboard-01/Group 2/Oval-button 2/Oval-button.png",
+      "layerNameFormatted": "Oval-button",
+      "layerPath": "Page 1/Artboard-01/Group 2/Oval-button 2",
+      "layerName": "Oval-button",
+      "originalObjectID": "",
+      "symbolAsset": false,
+      "key": ".png",
+      "objectID": "48EBF384-35AC-4611-A1EB-6E31C22DC5E9"
+    },
+    {
+      "pageID": "B9B06CE4-3A85-4866-884F-79A1001A81C1",
+      "fullPath": "/var/folders/nz/g38hlwc55hx46m3ll425cnqc0000gn/T/com.invisionlabs.CraftManager/SketchPublisher/80A68998-240B-4FCA-89B3-541295795042-523-00006B5FAF18D5B6/output/50D2E38C-A3D4-4CF4-BD53-104735859767/Page 1/Artboard-01/Group 2/Rectangle.png",
+      "layerNameFormatted": "Rectangle",
+      "layerPath": "Page 1/Artboard-01/Group 2",
+      "layerName": "Rectangle",
+      "originalObjectID": "",
+      "symbolAsset": false,
+      "key": ".png",
+      "objectID": "333908EB-37FE-467A-8A38-D37705717D60"
+    }
+  ],
+  "all_layer_assets_found": true,
+  "assetDirectoryPath": "images/inspect/craft-test-001",
+  "asset_directory_id": 3681,
+  "asset_id": 0,
+  "authenticated_user_id": "18",
+  "backgroundColor": [
+    164,
+    137,
+    137,
+    1
+  ],
+  "displayScale": 1,
+  "documentColors": [],
+  "grid": {
+    "gridSize": 0,
+    "thickGridTimes": 0
+  },
+  "guides": {
+    "horizontal": [],
+    "vertical": []
+  },
+  "height": 455,
+  "id": 4203,
+  "layers": [
+    {
+      "id": "4A343A3F-16E7-4251-A514-B63ED33109A2",
+      "index": 0,
+      "rotation": 0,
+      "layers": [
+        {
+          "rotation": 0,
+          "exportOptions": [],
+          "index": 0,
+          "borders": [
+            {
+              "placement": "center",
+              "type": "solid",
+              "thickness": 7,
+              "color": [
+                151,
+                151,
+                151,
+                1
+              ]
+            }
+          ],
+          "isInitiallyVisible": true,
+          "name": "Line 2",
+          "shadows": [],
+          "type": "line",
+          "id": "2F91620D-AE4C-41E1-870A-B6E7A2E2E4B0",
+          "x2": 263.5,
+          "x": 173.5,
+          "length": 121.75,
+          "y": 312.5,
+          "flippedVertical": false,
+          "flippedHorizontal": false,
+          "opacity": 1,
+          "width": 90,
+          "height": 82,
+          "order": 0,
+          "y2": 394.5
+        },
+        {
+          "rotation": 0,
+          "exportOptions": [
+            {
+              "format": "png",
+              "suffix": "",
+              "prefix": "",
+              "height": 174,
+              "width": 46,
+              "path": "craft-test-001/Page 1/Artboard-01/Group/Line.png",
+              "name": "Line",
+              "scale": 2,
+              "idLookupCount": 1,
+              "status": 2,
+              "asset_id": 4629,
+              "secret_key": "C2216FB2-D125-49BE-8C215C9175BD5230"
+            }
+          ],
+          "index": 1,
+          "borders": [
+            {
+              "placement": "center",
+              "type": "solid",
+              "thickness": 6,
+              "color": [
+                151,
+                151,
+                151,
+                1
+              ]
+            }
+          ],
+          "isInitiallyVisible": true,
+          "name": "Line",
+          "shadows": [],
+          "type": "line",
+          "id": "6E310C89-FBBC-4E8A-9294-095148E9DB59",
+          "x2": 101.5,
+          "x": 124.5,
+          "length": "89.989999999999995",
+          "y": 312.5,
+          "flippedVertical": false,
+          "flippedHorizontal": false,
+          "opacity": 1,
+          "width": 23,
+          "height": 87,
+          "order": 0,
+          "y2": 399.5
+        }
+      ],
+      "exportOptions": [],
+      "x": 101.5,
+      "isInitiallyVisible": true,
+      "y": 312.5,
+      "width": 162,
+      "shadows": [],
+      "type": "group",
+      "flippedHorizontal": false,
+      "opacity": 1,
+      "order": 0,
+      "height": 87,
+      "name": "Group",
+      "flippedVertical": false
+    },
+    {
+      "rotation": 0,
+      "gradients": [],
+      "exportOptions": [],
+      "index": 1,
+      "borders": [
+        {
+          "placement": "inside",
+          "type": "solid",
+          "thickness": 5,
+          "color": [
+            151,
+            151,
+            151,
+            1
+          ]
+        }
+      ],
+      "isInitiallyVisible": true,
+      "name": "Polygon",
+      "shadows": [],
+      "type": "path",
+      "id": "C3B74137-5BC0-4336-B389-91C9039AC7E0",
+      "x": 209,
+      "flippedHorizontal": false,
+      "innerShadows": [],
+      "y": 153,
+      "flippedVertical": false,
+      "opacity": 1,
+      "height": 105,
+      "width": 108,
+      "fillColor": [
+        [
+          216,
+          216,
+          216,
+          1
+        ]
+      ],
+      "order": 0
+    },
+    {
+      "rotation": 0,
+      "gradients": [],
+      "exportOptions": [
+        {
+          "format": "png",
+          "suffix": "",
+          "prefix": "",
+          "height": 224,
+          "width": 162,
+          "path": "craft-test-001/Page 1/Artboard-01/Triangle.png",
+          "name": "Triangle",
+          "scale": 2,
+          "idLookupCount": 1,
+          "status": 2,
+          "asset_id": 4627,
+          "secret_key": "E910ECAA-CC10-4D4B-93C6BEC3CF29EC80"
+        }
+      ],
+      "index": 2,
+      "borders": [
+        {
+          "placement": "inside",
+          "type": "solid",
+          "thickness": 8,
+          "color": [
+            105,
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "isInitiallyVisible": true,
+      "name": "Triangle",
+      "shadows": [],
+      "type": "path",
+      "id": "E9F7B7EF-2F8C-418A-934A-6AD07CC6E0DA",
+      "x": 43,
+      "flippedHorizontal": false,
+      "innerShadows": [],
+      "y": 137,
+      "flippedVertical": false,
+      "opacity": 1,
+      "height": 112,
+      "width": 81,
+      "fillColor": [
+        [
+          76,
+          141,
+          190,
+          1
+        ]
+      ],
+      "order": 0
+    },
+    {
+      "id": "25455C58-7C19-45A0-886D-ADCEF1800669",
+      "index": 3,
+      "rotation": 0,
+      "layers": [
+        {
+          "id": "8439374D-CED4-4F30-B9BA-BBC37BA7EA1D",
+          "index": 0,
+          "rotation": 0,
+          "layers": [
+            {
+              "rotation": 0,
+              "gradients": [],
+              "exportOptions": [
+                {
+                  "format": "png",
+                  "suffix": "",
+                  "prefix": "",
+                  "height": 228,
+                  "width": 252,
+                  "path": "craft-test-001/Page 1/Artboard-01/Group 2/Oval-button 2/Oval-button.png",
+                  "name": "Oval-button",
+                  "scale": 2,
+                  "idLookupCount": 2,
+                  "status": 2,
+                  "asset_id": 4631,
+                  "secret_key": "491C420F-5910-46DE-ACE383DB41690B27"
+                }
+              ],
+              "index": 0,
+              "borders": [
+                {
+                  "placement": "inside",
+                  "type": "solid",
+                  "thickness": 3,
+                  "color": [
+                    118,
+                    229,
+                    96,
+                    1
+                  ]
+                }
+              ],
+              "isInitiallyVisible": true,
+              "name": "Oval-button",
+              "shadows": [],
+              "type": "path",
+              "id": "48EBF384-35AC-4611-A1EB-6E31C22DC5E9",
+              "x": 191,
+              "flippedHorizontal": false,
+              "innerShadows": [],
+              "y": 23,
+              "flippedVertical": false,
+              "opacity": 1,
+              "height": 114,
+              "width": 126,
+              "fillColor": [
+                [
+                  48,
+                  50,
+                  150,
+                  1
+                ]
+              ],
+              "order": 0
+            }
+          ],
+          "exportOptions": [],
+          "x": 191,
+          "isInitiallyVisible": true,
+          "y": 23,
+          "width": 126,
+          "shadows": [],
+          "type": "group",
+          "flippedHorizontal": false,
+          "opacity": 1,
+          "order": 0,
+          "height": 114,
+          "name": "Oval-button 2",
+          "flippedVertical": false
+        },
+        {
+          "rotation": 0,
+          "gradients": [],
+          "exportOptions": [
+            {
+              "format": "png",
+              "suffix": "",
+              "prefix": "",
+              "height": 194,
+              "width": 260,
+              "path": "craft-test-001/Page 1/Artboard-01/Group 2/Rectangle.png",
+              "name": "Rectangle",
+              "scale": 2,
+              "idLookupCount": 2,
+              "status": 2,
+              "asset_id": 4630,
+              "secret_key": "A77C3002-625E-4F2F-A7C6BFEFE4DD8AED"
+            }
+          ],
+          "index": 1,
+          "borders": [
+            {
+              "placement": "inside",
+              "type": "solid",
+              "thickness": 12,
+              "color": [
+                56,
+                146,
+                16,
+                1
+              ]
+            }
+          ],
+          "isInitiallyVisible": true,
+          "name": "Rectangle",
+          "shadows": [],
+          "type": "path",
+          "id": "333908EB-37FE-467A-8A38-D37705717D60",
+          "x": 18,
+          "flippedHorizontal": false,
+          "innerShadows": [],
+          "y": 31,
+          "flippedVertical": false,
+          "opacity": 1,
+          "height": 97,
+          "width": 130,
+          "borderRadius": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "fillColor": [
+            [
+              255,
+              255,
+              255,
+              1,
+              "##CALCITE##",
+              "Global Colors"
+            ]
+          ],
+          "order": 0
+        }
+      ],
+      "exportOptions": [],
+      "x": 18,
+      "isInitiallyVisible": true,
+      "y": 23,
+      "width": 299,
+      "shadows": [],
+      "type": "group",
+      "flippedHorizontal": false,
+      "opacity": 1,
+      "order": 0,
+      "height": 114,
+      "name": "Group 2",
+      "flippedVertical": false
+    }
+  ],
+  "layout": {
+    "lightColor": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rows": {
+      "drawHorizontalLines": false,
+      "gutterHeight": 0,
+      "rowHeightMultiplication": 0,
+      "drawHorizontal": false
+    },
+    "columns": {
+      "gutterWidth": 0,
+      "numberOfColumns": 0,
+      "horizontalOffset": 0,
+      "totalWidth": 0,
+      "gutterOutside": false,
+      "columnWidth": 0,
+      "drawVertical": false
+    },
+    "darkColor": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "metaData": {
+    "craftExtractVersion": "1.0.99",
+    "fileLastModified": "2020-08-11T20:44:37+07:00",
+    "source": "Sketch",
+    "generated": "2020-08-11T20:44:44+07:00",
+    "sourceBuildVersion": "100443",
+    "craftExtractBuild": "209",
+    "document_id": "32B48BAF-3837-4AD9-9313-9BE5AA024165",
+    "documentID": "32B48BAF-3837-4AD9-9313-9BE5AA024165",
+    "filename": "craft-test-001.sketch",
+    "pluginBuildVersion": "209",
+    "pv": "1.0.99",
+    "userInfo": {
+      "com_invisionlabs_sync": {
+        "metadata": "{\"hasSynced\":0,\"hasProjectIdChanged\":0,\"projectId\":0,\"publicLink\":\"\",\"resolution\":2,\"syncAll\":1}"
+      }
+    },
+    "fileSize": 46492,
+    "pluginName": "CraftManager",
+    "sv": "67.2",
+    "fileCreated": "2020-08-06T01:07:09+07:00"
+  },
+  "name": "Artboard-01",
+  "pageIndex": 0,
+  "pageName": "Page 1",
+  "project_asset_directory_id": 3680,
+  "project_id": "924",
+  "rulerOffsets": {
+    "x": 0,
+    "y": 0
+  },
+  "screen_colors": [
+    [
+      "151",
+      "151",
+      "151",
+      "1"
+    ],
+    [
+      "76",
+      "141",
+      "190",
+      "1"
+    ],
+    [
+      "216",
+      "216",
+      "216",
+      "1"
+    ],
+    [
+      "255",
+      "255",
+      "255",
+      "1",
+      "##CALCITE##",
+      "Global Colors"
+    ],
+    [
+      "118",
+      "229",
+      "96",
+      "1"
+    ],
+    [
+      "56",
+      "146",
+      "16",
+      "1"
+    ],
+    [
+      "164",
+      "137",
+      "137",
+      "1"
+    ],
+    [
+      "48",
+      "50",
+      "150",
+      "1"
+    ],
+    [
+      "105",
+      "1",
+      "1",
+      "1"
+    ]
+  ],
+  "total_layer_assets": 4,
+  "typefaces": [],
+  "width": 344,
+  "max_density": 2
+}
