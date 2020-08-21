@@ -230,3 +230,29 @@ func TestJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestFindAssetIDs(t *testing.T) {
+	originalBytes, err := ioutil.ReadFile(path.Join("testdata", "screen_v3_01.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	doc, err := Parse(bytes.NewReader(originalBytes))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	strAssetIDs := []string{"4629", "4627", "4631", "4630"}
+	nodes := Find(doc, "/layers//exportOptions//asset_id")
+	if n := len(nodes); n != 4 {
+		t.Fatalf("Expected 4 nodes but got only %v", n)
+	}
+	for i, n := range nodes {
+		if n.Data != "asset_id" {
+			t.Fatalf("Expected asset_id but got %s", n.Data)
+		}
+		if n.InnerText() != strAssetIDs[i] {
+			t.Fatalf("Expected %s but got %s", strAssetIDs[i], n.InnerText())
+		}
+	}
+}
