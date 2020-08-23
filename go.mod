@@ -1,4 +1,4 @@
-module github.com/antchfx/jsonquery
+module github.com/InVisionApp/jsonquery
 
 go 1.14
 
