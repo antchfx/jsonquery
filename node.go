@@ -27,11 +27,12 @@ const (
 )
 
 const (
-	arrayType = contentType("array")
-	objectType = contentType("object")
-	stringType = contentType("string")
+	arrayType   = contentType("array")
+	objectType  = contentType("object")
+	stringType  = contentType("string")
 	float64Type = contentType("float64")
-	boolType = contentType("bool")
+	boolType    = contentType("bool")
+	nullType    = contentType("null")
 )
 
 // A Node consists of a NodeType and some Data (tag name for
@@ -44,6 +45,8 @@ type Node struct {
 
 	level       int
 	contentType contentType
+	idata       interface{}
+	skipped     bool
 }
 
 // ChildNodes gets all child nodes of the node.
@@ -70,6 +73,34 @@ func (n *Node) InnerText() string {
 	var buf bytes.Buffer
 	output(&buf, n)
 	return buf.String()
+}
+
+func (n *Node) InnerData() interface{} {
+	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		return child.InnerData()
+	}
+
+	return n.idata
+}
+
+func (n *Node) SetInnerData(idata interface{}) {
+	for child := n.FirstChild; child != nil; child = child.NextSibling {
+		child.SetInnerData(idata)
+	}
+
+	n.idata = idata
+}
+
+func (n *Node) GetParent(level int) *Node {
+	if n.Parent.level == level {
+		return n.Parent
+	}
+
+	return n.Parent.GetParent(level)
+}
+
+func (n *Node) Skipped() {
+	n.skipped = true
 }
 
 func outputXML(buf *bytes.Buffer, n *Node) {
@@ -105,12 +136,16 @@ func (n *Node) OutputXML() string {
 	return buf.String()
 }
 
-func (n *Node) JSON() (interface{}, error) {
+func (n *Node) JSON(skipped bool) (interface{}, error) {
 	switch n.contentType {
 	case arrayType:
 		arr := make([]interface{}, 0)
 		for _, node := range n.ChildNodes() {
-			value, err := node.JSON()
+			if skipped && node.skipped {
+				continue
+			}
+
+			value, err := node.JSON(skipped)
 			if err != nil {
 				return nil, err
 			}
@@ -120,7 +155,11 @@ func (n *Node) JSON() (interface{}, error) {
 	case objectType:
 		obj := map[string]interface{}{}
 		for _, node := range n.ChildNodes() {
-			value, err := node.JSON()
+			if skipped && node.skipped {
+				continue
+			}
+
+			value, err := node.JSON(skipped)
 			if err != nil {
 				return nil, err
 			}
@@ -133,6 +172,8 @@ func (n *Node) JSON() (interface{}, error) {
 		return n.InnerText(), nil
 	case boolType:
 		return strconv.ParseBool(n.InnerText())
+	case nullType:
+		return nil, nil
 	}
 
 	return nil, fmt.Errorf("%v type is not supported", n.contentType)
@@ -209,19 +250,24 @@ func parseValue(x interface{}, top *Node, level int) {
 	case string:
 		top.contentType = stringType
 
-		n := &Node{Data: v, Type: TextNode, level: level}
+		n := &Node{Data: v, Type: TextNode, level: level, idata: v}
 		addNode(n)
 	case float64:
 		top.contentType = float64Type
 
 		s := strconv.FormatFloat(v, 'f', -1, 64)
-		n := &Node{Data: s, Type: TextNode, level: level}
+		n := &Node{Data: s, Type: TextNode, level: level, idata: v}
 		addNode(n)
 	case bool:
 		top.contentType = boolType
 
 		s := strconv.FormatBool(v)
-		n := &Node{Data: s, Type: TextNode, level: level}
+		n := &Node{Data: s, Type: TextNode, level: level, idata: v}
+		addNode(n)
+	case nil:
+		top.contentType = nullType
+
+		n := &Node{Data: "", Type: TextNode, level: level, idata: v}
 		addNode(n)
 	}
 }

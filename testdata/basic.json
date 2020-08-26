@@ -5,6 +5,7 @@
   "emptyStr": "",
   "int": 1,
   "str": "foo",
+  "empty": null,
   "simpleObj": {
     "foo": "foo1",
     "bar": "bar1"
