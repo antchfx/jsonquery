@@ -10,6 +10,17 @@ Overview
 
 jsonquery is an XPath query package for JSON document, lets you extract data from JSON documents through an XPath expression. Built-in XPath expression cache avoid re-compile XPath expression each query.
 
+
+XPath query for Golang
+===
+
+- [htmlquery](https://github.com/antchfx/htmlquery) - XPath query package for HTML document
+
+- [xmlquery](https://github.com/antchfx/xmlquery) - XPath query package for XML document.
+
+- [jsonquery](https://github.com/antchfx/jsonquery) - XPath query package for JSON document
+
+
 Getting Started
 ===
 
@@ -115,61 +126,3 @@ func main() {
 	}
 }
 ```
-
-Implement Principle
-===
-If you are familiar with XPath and XML, you can easily figure out how to
-write your XPath expression.
-
-```json
-{
-"name":"John",
-"age":30,
-"cars": [
-	{ "name":"Ford", "models":[ "Fiesta", "Focus", "Mustang" ] },
-	{ "name":"BMW", "models":[ "320", "X3", "X5" ] },
-	{ "name":"Fiat", "models":[ "500", "Panda" ] }
-]
-}
-```
-The above JSON document will be convert to similar to XML document by the *JSONQuery*, like below:
-
-```XML
-<name>John</name>
-<age>30</age>
-<cars>
-	<element>
-		<name>Ford</name>
-		<models>
-			<element>Fiesta</element>
-			<element>Focus</element>
-			<element>Mustang</element>
-		</models>		
-	</element>
-	<element>
-		<name>BMW</name>
-		<models>
-			<element>320</element>
-			<element>X3</element>
-			<element>X5</element>
-		</models>		
-	</element>
-	<element>
-		<name>Fiat</name>
-		<models>
-			<element>500</element>
-			<element>Panda</element>
-		</models>		
-	</element>
-</cars>
-```
-
-Notes: `element` is empty element that have no any name.
-
-List of XPath query packages
-===
-|Name |Description |
-|--------------------------|----------------|
-|[htmlquery](https://github.com/antchfx/htmlquery) | XPath query package for the HTML document|
-|[xmlquery](https://github.com/antchfx/xmlquery) | XPath query package for the XML document|
-|[jsonquery](https://github.com/antchfx/jsonquery) | XPath query package for the JSON document|
