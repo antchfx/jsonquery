@@ -102,13 +102,11 @@ func (a *NodeNavigator) Prefix() string {
 }
 
 func (a *NodeNavigator) Value() string {
-	switch a.cur.Type {
-	case ElementNode:
-		return a.cur.InnerText()
-	case TextNode:
-		return a.cur.Data
-	}
-	return ""
+	return fmt.Sprintf("%v", a.cur.value)
+}
+
+func (a *NodeNavigator) GetValue() interface{} {
+	return a.cur.value
 }
 
 func (a *NodeNavigator) Copy() xpath.NodeNavigator {

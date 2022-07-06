@@ -3,11 +3,11 @@ package jsonquery
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"sort"
-	"strconv"
 )
 
 // A NodeType is the type of a Node.
@@ -32,6 +32,12 @@ type Node struct {
 	Data string
 
 	level int
+	value interface{}
+}
+
+// Gets the JSON object value.
+func (n *Node) Value() interface{} {
+	return n.value
 }
 
 // ChildNodes gets all child nodes of the node.
@@ -43,12 +49,14 @@ func (n *Node) ChildNodes() []*Node {
 	return a
 }
 
-// InnerText gets the value of the node and all its child nodes.
+// InnerText will gets the value of the node and all its child nodes.
+//
+// Deprecated: Use Value() to get JSON object value.
 func (n *Node) InnerText() string {
 	var output func(*bytes.Buffer, *Node)
 	output = func(buf *bytes.Buffer, n *Node) {
 		if n.Type == TextNode {
-			buf.WriteString(n.Data)
+			buf.WriteString(fmt.Sprintf("%v", n.value))
 			return
 		}
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
@@ -138,12 +146,14 @@ func parseValue(x interface{}, top *Node, level int) {
 	}
 	switch v := x.(type) {
 	case []interface{}:
+		// JSON array
 		for _, vv := range v {
-			n := &Node{Type: ElementNode, level: level}
+			n := &Node{Type: ElementNode, level: level, value: vv}
 			addNode(n)
 			parseValue(vv, n, level+1)
 		}
 	case map[string]interface{}:
+		// JSON object
 		// The Go’s map iteration order is random.
 		// (https://blog.golang.org/go-maps-in-action#Iteration-order)
 		var keys []string
@@ -152,20 +162,13 @@ func parseValue(x interface{}, top *Node, level int) {
 		}
 		sort.Strings(keys)
 		for _, key := range keys {
-			n := &Node{Data: key, Type: ElementNode, level: level}
+			n := &Node{Data: key, Type: ElementNode, level: level, value: v[key]}
 			addNode(n)
 			parseValue(v[key], n, level+1)
 		}
-	case string:
-		n := &Node{Data: v, Type: TextNode, level: level}
-		addNode(n)
-	case float64:
-		s := strconv.FormatFloat(v, 'f', -1, 64)
-		n := &Node{Data: s, Type: TextNode, level: level}
-		addNode(n)
-	case bool:
-		s := strconv.FormatBool(v)
-		n := &Node{Data: s, Type: TextNode, level: level}
+	default:
+		// JSON types: string, number, boolean
+		n := &Node{Data: fmt.Sprintf("%v", v), Type: TextNode, level: level, value: fmt.Sprintf("%v", v)}
 		addNode(n)
 	}
 }

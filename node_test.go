@@ -1,7 +1,7 @@
 package jsonquery
 
 import (
-	"sort"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -16,20 +16,19 @@ func TestParseJsonNumberArray(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// output like below:
-	// <element>1</element>
-	// <element>2</element>
-	// ...
-	// <element>6</element>
-	if e, g := 6, len(doc.ChildNodes()); e != g {
-		t.Fatalf("excepted %v but got %v", e, g)
-	}
-	var v []string
+
+	var values []float64
 	for _, n := range doc.ChildNodes() {
-		v = append(v, n.InnerText())
+		values = append(values, n.Value().(float64))
 	}
-	if got, expected := strings.Join(v, ","), "1,2,3,4,5,6"; got != expected {
-		t.Fatalf("got %v but expected %v", got, expected)
+
+	expected := []float64{1, 2, 3, 4, 5, 6}
+
+	if p1, p2 := len(values), len(expected); p1 != p2 {
+		t.Fatalf("got %d elements but expected %d", p1, p2)
+	}
+	if !reflect.DeepEqual(values, expected) {
+		t.Fatalf("got %v but expected %v", values, expected)
 	}
 }
 
@@ -37,98 +36,57 @@ func TestParseJsonObject(t *testing.T) {
 	s := `{
 		"name":"John",
 		"age":31,
-		"city":"New York"
+		"female":false
 	}`
 	doc, err := parseString(s)
 	if err != nil {
 		t.Fatal(err)
 	}
-	// output like below:
-	// <name>John</name>
-	// <age>31</age>
-	// <city>New York</city>
-	m := make(map[string]string)
+
+	m := make(map[string]interface{})
+
 	for _, n := range doc.ChildNodes() {
-		m[n.Data] = n.InnerText()
+		m[n.Data] = n.Value()
 	}
 	expected := []struct {
-		name, value string
+		name  string
+		value interface{}
 	}{
 		{"name", "John"},
-		{"age", "31"},
-		{"city", "New York"},
+		{"age", float64(31)},
+		{"female", false},
 	}
 	for _, v := range expected {
 		if e, g := v.value, m[v.name]; e != g {
-			t.Fatalf("expected %v=%v,but %v=%v", v.name, e, v.name, g)
+			t.Fatalf("expected %s = %v(%T),but %s = %v(%t)", v.name, e, e, v.name, g, g)
 		}
 	}
 }
 
 func TestParseJsonObjectArray(t *testing.T) {
 	s := `[
-		{ "name":"Ford", "models":[ "Fiesta", "Focus", "Mustang" ] },
-		{ "name":"BMW", "models":[ "320", "X3", "X5" ] },
-        { "name":"Fiat", "models":[ "500", "Panda" ] }
+		{"models":[ "Fiesta", "Focus", "Mustang" ] }
 	]`
 	doc, err := parseString(s)
 	if err != nil {
 		t.Fatal(err)
 	}
-	/**
-	<element>
-		<name>Ford</name>
-		<models>
-			<element>Fiesta</element>
-			<element>Focus</element>
-			<element>Mustang</element>
-		</models>
-	</element>
-	<element>
-		<name>BMW</name>
-		<models>
-			<element>320</element>
-			<element>X3</element>
-			<element>X5</element>
-		</models>
-	</element>
-	....
-	*/
-	if e, g := 3, len(doc.ChildNodes()); e != g {
-		t.Fatalf("expected %v, but %v", e, g)
-	}
-	m := make(map[string][]string)
-	for _, n := range doc.ChildNodes() {
-		// Go to the next of the element list.
-		var name string
-		var models []string
-		for _, e := range n.ChildNodes() {
-			if e.Data == "name" {
-				// a name node.
-				name = e.InnerText()
-			} else {
-				// a models node.
-				for _, k := range e.ChildNodes() {
-					models = append(models, k.InnerText())
-				}
-			}
-		}
-		// Sort models list.
-		sort.Strings(models)
-		m[name] = models
 
+	first := doc.FirstChild
+	models := first.SelectElement("models")
+
+	if expected := reflect.ValueOf(models.Value()).Kind(); expected != reflect.Slice {
+		t.Fatalf("expected models is slice(Array) but got %v", expected)
 	}
-	expected := []struct {
-		name, value string
-	}{
-		{"Ford", "Fiesta,Focus,Mustang"},
-		{"BMW", "320,X3,X5"},
-		{"Fiat", "500,Panda"},
+
+	expected := []string{"Fiesta", "Focus", "Mustang"}
+	var values []string
+	for _, v := range models.Value().([]interface{}) {
+		values = append(values, v.(string))
 	}
-	for _, v := range expected {
-		if e, g := v.value, strings.Join(m[v.name], ","); e != g {
-			t.Fatalf("expected %v=%v,but %v=%v", v.name, e, v.name, g)
-		}
+
+	if !reflect.DeepEqual(expected, values) {
+		t.Fatalf("expected %v but got %v", expected, values)
 	}
 }
 
@@ -171,7 +129,7 @@ func TestLargeFloat(t *testing.T) {
 		t.Fatal(err)
 	}
 	n := doc.SelectElement("large_number")
-	if n.InnerText() != "365823929453" {
+	if n.Value() != float64(365823929453) {
 		t.Fatalf("expected %v but %v", "365823929453", n.InnerText())
 	}
 }
