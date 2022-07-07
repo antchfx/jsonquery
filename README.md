@@ -214,14 +214,13 @@ Convert current JSON object to XML format.
 | ------- | -------------| -------- | -------------|
 | `//book`      | 1     | []interface{} | `{"book": [{"id":1,... }, {"id":2,... }, {"id":3,... }, {"id":4,... }]}`   |
 | `//book/*`    | 4     | [map[string]interface{}] |`{"id":1,... }`, `{"id":2,... }`, `{"id":3,... }`, `{"id":4,... }` |
-| `//*[price<12.99]`    | 2    | slice, [map[string]interface{}] | `{"id":1,...}`, `{"id":3,...}` | 
+| `//*[price<12.99]`    | 2    | [map[string]interface{}] | `{"id":1,...}`, `{"id":3,...}` | 
 | `//book/*/author` | 4 | []string | `{"author": "Nigel Rees"}`, `{"author": "Evelyn Waugh"}`, `{"author": "Herman Melville"}`, `{"author": "J. R. R. Tolkien"}` |
 | `//book/*[last()]` | 1 | map[string]interface {} | `{"id":4,...}` |
-| `//book/*[1]` | 1 | map[string]interface {} | `{"id":1,...}` |
 | `//book/*[2]` | 1    | map[string]interface{} | `{"id":2,...}` |
 | `//*[isbn]` | 2  | [map[string]interface{}] | `{"id":3,"isbn":"0-553-21311-3",...}`,`{"id":4,"isbn":"0-395-19395-8",...}` |
-| `//*[isbn='0-553-21311-3']` | 1  | object, map[string]interface{} | `{"id":3,"isbn":"0-553-21311-3",...}` |
-| `//bicycle` | 1 | object, map[string]interface {}  | `{"bicycle":{"color":...,}}` |
+| `//*[isbn='0-553-21311-3']` | 1  | map[string]interface{} | `{"id":3,"isbn":"0-553-21311-3",...}` |
+| `//bicycle` | 1 | map[string]interface {}  | `{"bicycle":{"color":...,}}` |
 | `//bicycle/color[text()='red']` | 1 | map[string]interface {} |  `{"color":"red"}` |
 | `//*/category[contains(.,'refer')]` | 1 | string | `{"category": "reference"}` |
 | `//price[.=22.99]` | 1 | float64 | `{"price": 22.99}` |
