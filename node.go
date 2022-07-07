@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"sort"
 )
 
@@ -68,36 +69,47 @@ func (n *Node) InnerText() string {
 	return buf.String()
 }
 
-func outputXML(buf *bytes.Buffer, n *Node) {
-	switch n.Type {
-	case ElementNode:
-		if n.Data == "" {
-			buf.WriteString("<element>")
-		} else {
-			buf.WriteString("<" + n.Data + ">")
-		}
-	case TextNode:
-		buf.WriteString(n.Data)
+func outputXML(buf *bytes.Buffer, n *Node, level int, skip bool) {
+	level++
+	if n.Type == TextNode {
+		buf.WriteString(fmt.Sprintf("%v", n.value))
 		return
 	}
 
-	for child := n.FirstChild; child != nil; child = child.NextSibling {
-		outputXML(buf, child)
-	}
-	if n.Data == "" {
-		buf.WriteString("</element>")
+	if v := reflect.ValueOf(n.value); v.Kind() == reflect.Slice {
+		for child := n.FirstChild; child != nil; child = child.NextSibling {
+			buf.WriteString("<" + n.Data + ">")
+			outputXML(buf, child, level, true)
+			buf.WriteString("</" + n.Data + ">")
+		}
 	} else {
-		buf.WriteString("</" + n.Data + ">")
+		d := n.Data
+		if !skip {
+			if d == "" {
+				d = fmt.Sprintf("%v", n.value)
+			}
+			buf.WriteString("<" + d + ">")
+		}
+
+		for child := n.FirstChild; child != nil; child = child.NextSibling {
+			outputXML(buf, child, level, false)
+		}
+		if !skip {
+			buf.WriteString("</" + d + ">")
+		}
 	}
 }
 
 // OutputXML prints the XML string.
 func (n *Node) OutputXML() string {
 	var buf bytes.Buffer
-	buf.WriteString(`<?xml version="1.0"?>`)
+	buf.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
+	buf.WriteString("<root>")
+	level := 0
 	for n := n.FirstChild; n != nil; n = n.NextSibling {
-		outputXML(&buf, n)
+		outputXML(&buf, n, level, false)
 	}
+	buf.WriteString("</root>")
 	return buf.String()
 }
 
