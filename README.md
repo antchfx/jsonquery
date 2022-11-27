@@ -23,28 +23,79 @@ go get github.com/antchfx/jsonquery
 
 ## Get Started
 
-The below code may be help your understand what it does. We don't need pre-defined strcutre or using regexp to extract some data in JSON file, gets any data is easy and fast in jsonquery now.
+The below code may be help your understand what it does. We don't need pre-defined structure or using regexp to extract some data in JSON file, gets any data is easy and fast in jsonquery now.
 
+
+Using an xpath like syntax to access specific fields of a json structure.
 ```go
-s := `{
+// https://go.dev/play/p/vqoD_jWryKY
+package main
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/antchfx/jsonquery"
+)
+
+func main() {
+	s := `{
+            "person":{
+               "name":"John",
+               "age":31,
+               "female":false,
+               "city":null,
+               "hobbies":[
+                  "coding",
+                  "eating",
+                  "football"
+               ]
+            }
+         }`
+	doc, err := jsonquery.Parse(strings.NewReader(s))
+	if err != nil {
+		panic(err)
+	}
+	// xpath query
+	age := jsonquery.FindOne(doc, "age")
+	// or
+	age = jsonquery.FindOne(doc, "person/age")
+	fmt.Printf("%#v[%T]\n", age.Value(), age.Value()) // prints 31[float64]
+	
+	hobbies := jsonquery.FindOne(doc, "//hobbies") 
+	fmt.Printf("%#v\n", hobbies.Value()) // prints []interface {}{"coding", "eating", "football"}
+	firstHobby := jsonquery.FindOne(doc, "//hobbies/*[1]")
+	fmt.Printf("%#v\n", firstHobby.Value()) // "coding"
+}
+
+Iterating over a json structure.
+```go
+// https://go.dev/play/p/vwXQKTCLdVK
+package main
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/antchfx/jsonquery"
+)
+
+func main() {
+	s := `{
 	"name":"John",
 	"age":31,
 	"female":false,
 	"city":null
 	}`
-doc, err := jsonquery.Parse(strings.NewReader(s))
-if err != nil {
-	panic(err)
+	doc, err := jsonquery.Parse(strings.NewReader(s))
+	if err != nil {
+		panic(err)
+	}
+	// iterate all json objects from child ndoes.
+	for _, n := range doc.ChildNodes() {
+		fmt.Printf("%s: %v[%T]\n", n.Data, n.Value(), n.Value())
+	}
 }
-// iterate all json objects from child ndoes.
-for _, n := range doc.ChildNodes() {
-	fmt.Printf("%s: %v[%T]\n", n.Data, n.Value(), n.Value())
-}
-// xpath query
-n := jsonquery.FindOne(doc, "//age")
-fmt.Printf("age: %.2f", n.Value().(float64))
-// select a child node with `age`. = jsonquery.FindOne(doc,"age") 
-m := doc.SelectElement("age")
 ```
 
 // Output:
@@ -55,6 +106,9 @@ age: 31[float64]
 female: false[bool]
 city: <nil>[<nil>]
 ```
+
+```
+
 
 The default Json types and Go types are:
 
