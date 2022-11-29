@@ -27,6 +27,7 @@ The below code may be help your understand what it does. We don't need pre-defin
 
 
 Using an xpath like syntax to access specific fields of a json structure.
+
 ```go
 // https://go.dev/play/p/vqoD_jWryKY
 package main
@@ -69,6 +70,7 @@ func main() {
 }
 
 Iterating over a json structure.
+
 ```go
 // https://go.dev/play/p/vwXQKTCLdVK
 package main
@@ -106,9 +108,6 @@ age: 31[float64]
 female: false[bool]
 city: <nil>[<nil>]
 ```
-
-```
-
 
 The default Json types and Go types are:
 
