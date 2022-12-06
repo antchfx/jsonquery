@@ -68,7 +68,7 @@ func main() {
 	firstHobby := jsonquery.FindOne(doc, "//hobbies/*[1]")
 	fmt.Printf("%#v\n", firstHobby.Value()) // "coding"
 }
-
+```
 Iterating over a json structure.
 
 ```go
@@ -100,7 +100,7 @@ func main() {
 }
 ```
 
-// Output:
+Output:
 
 ```
 name: John[string]
