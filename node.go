@@ -1,7 +1,6 @@
 package jsonquery
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,6 +8,7 @@ import (
 	"net/http"
 	"reflect"
 	"sort"
+	"strings"
 )
 
 // A NodeType is the type of a Node.
@@ -54,33 +54,33 @@ func (n *Node) ChildNodes() []*Node {
 //
 // Deprecated: Use Value() to get JSON object value.
 func (n *Node) InnerText() string {
-	var output func(*bytes.Buffer, *Node)
-	output = func(buf *bytes.Buffer, n *Node) {
+	var output func(*strings.Builder, *Node)
+	output = func(b *strings.Builder, n *Node) {
 		if n.Type == TextNode {
-			buf.WriteString(fmt.Sprintf("%v", n.value))
+			b.WriteString(fmt.Sprintf("%v", n.value))
 			return
 		}
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
-			output(buf, child)
+			output(b, child)
 		}
 	}
-	var buf bytes.Buffer
-	output(&buf, n)
-	return buf.String()
+	var b strings.Builder
+	output(&b, n)
+	return b.String()
 }
 
-func outputXML(buf *bytes.Buffer, n *Node, level int, skip bool) {
+func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 	level++
 	if n.Type == TextNode {
-		buf.WriteString(fmt.Sprintf("%v", n.value))
+		b.WriteString(fmt.Sprintf("%v", n.value))
 		return
 	}
 
 	if v := reflect.ValueOf(n.value); v.Kind() == reflect.Slice {
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
-			buf.WriteString("<" + n.Data + ">")
-			outputXML(buf, child, level, true)
-			buf.WriteString("</" + n.Data + ">")
+			b.WriteString("<" + n.Data + ">")
+			outputXML(b, child, level, true)
+			b.WriteString("</" + n.Data + ">")
 		}
 	} else {
 		d := n.Data
@@ -88,29 +88,29 @@ func outputXML(buf *bytes.Buffer, n *Node, level int, skip bool) {
 			if d == "" {
 				d = fmt.Sprintf("%v", n.value)
 			}
-			buf.WriteString("<" + d + ">")
+			b.WriteString("<" + d + ">")
 		}
 
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
-			outputXML(buf, child, level, false)
+			outputXML(b, child, level, false)
 		}
 		if !skip {
-			buf.WriteString("</" + d + ">")
+			b.WriteString("</" + d + ">")
 		}
 	}
 }
 
 // OutputXML prints the XML string.
 func (n *Node) OutputXML() string {
-	var buf bytes.Buffer
-	buf.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
-	buf.WriteString("<root>")
+	var b strings.Builder
+	b.WriteString(`<?xml version="1.0" encoding="utf-8"?>`)
+	b.WriteString("<root>")
 	level := 0
 	for n := n.FirstChild; n != nil; n = n.NextSibling {
-		outputXML(&buf, n, level, false)
+		outputXML(&b, n, level, false)
 	}
-	buf.WriteString("</root>")
-	return buf.String()
+	b.WriteString("</root>")
+	return b.String()
 }
 
 // SelectElement finds the first of child elements with the
