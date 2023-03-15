@@ -160,8 +160,9 @@ for _, n := range list {
 ```
 // Output: `1,2,3,4,5,6`
 
-#### Convert JSON object to XML
+#### Convert JSON object to XML file
 ```go
+s := `[{"name":"John", "age":31, "female":false, "city":null}]`
 doc, _ := jsonquery.Parse(strings.NewReader(s))
 fmt.Println(doc.OutputXML())
 ```
@@ -214,7 +215,7 @@ list, err := jsonquery.QueryAll(doc, "*")
 
 Convert current JSON object to XML format.
 
-# Examples
+## Example of how to convert JSON object to XML file
 
 ```json
 {
@@ -259,6 +260,59 @@ Convert current JSON object to XML format.
   "expensive": 10
 }
 
+```
+
+```go
+	doc, err := jsonquery.Parse(strings.NewReader(s))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(doc.OutputXML())
+```
+
+Output the below XML:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <expensive>10</expensive>
+  <store>
+    <bicycle>
+      <color>red</color>
+      <price>19.95</price>
+    </bicycle>
+    <book>
+      <author>Nigel Rees</author>
+      <category>reference</category>
+      <id>1</id>
+      <price>8.95</price>
+      <title>Sayings of the Century</title>
+    </book>
+    <book>
+      <author>Evelyn Waugh</author>
+      <category>fiction</category>
+      <id>2</id>
+      <price>12.99</price>
+      <title>Sword of Honour</title>
+    </book>
+    <book>
+      <author>Herman Melville</author>
+      <category>fiction</category>
+      <id>3</id>
+      <isbn>0-553-21311-3</isbn>
+      <price>8.99</price>
+      <title>Moby Dick</title>
+    </book>
+    <book>
+      <author>J. R. R. Tolkien</author>
+      <category>fiction</category>
+      <id>4</id>
+      <isbn>0-395-19395-8</isbn>
+      <price>22.99</price>
+      <title>The Lord of the Rings</title>
+    </book>
+  </store>
+</root>
 ```
 
 #### Tests
