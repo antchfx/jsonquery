@@ -75,7 +75,6 @@ func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 		b.WriteString(fmt.Sprintf("%v", n.value))
 		return
 	}
-
 	if v := reflect.ValueOf(n.value); v.Kind() == reflect.Slice {
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
 			b.WriteString("<" + n.Data + ">")
@@ -86,13 +85,18 @@ func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 		d := n.Data
 		if !skip {
 			if d == "" {
-				d = fmt.Sprintf("%v", n.value)
+				if v := reflect.ValueOf(n.value); v.Kind() == reflect.Map {
+					d = "element"
+				} else {
+					d = fmt.Sprintf("%v", n.value)
+				}
 			}
 			b.WriteString("<" + d + ">")
 		}
-
-		for child := n.FirstChild; child != nil; child = child.NextSibling {
-			outputXML(b, child, level, false)
+		if reflect.TypeOf(n.value) != nil {
+			for child := n.FirstChild; child != nil; child = child.NextSibling {
+				outputXML(b, child, level, false)
+			}
 		}
 		if !skip {
 			b.WriteString("</" + d + ">")
