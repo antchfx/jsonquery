@@ -263,11 +263,11 @@ Convert current JSON object to XML format.
 ```
 
 ```go
-	doc, err := jsonquery.Parse(strings.NewReader(s))
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(doc.OutputXML())
+doc, err := jsonquery.Parse(strings.NewReader(s))
+if err != nil {
+	panic(err)
+}
+fmt.Println(doc.OutputXML())
 ```
 
 Output the below XML:
@@ -315,7 +315,7 @@ Output the below XML:
 </root>
 ```
 
-#### Tests
+## XPath Tests
 
 | Query    | Matched | Native Value Types | Native Values |
 | ------- | -------------| -------- | -------------|
