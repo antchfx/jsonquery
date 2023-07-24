@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/antchfx/xpath"
+	"github.com/stretchr/testify/require"
 )
 
 func BenchmarkSelectorCache(b *testing.B) {
@@ -31,30 +32,22 @@ func TestNavigator(t *testing.T) {
 			{ "name":"Fiat", "models":[ "500", "Panda" ] }
 		]
 	 }`
-	doc, _ := parseString(s)
+	doc, err := parseString(s)
+	require.NoError(t, err)
 
 	nav := CreateXPathNavigator(doc)
 	nav.MoveToRoot()
-	if nav.NodeType() != xpath.RootNode {
-		t.Fatal("node type is not RootNode")
-	}
+	require.Equal(t, xpath.RootNode, nav.NodeType(), "node type is not RootNode")
+
 	// Move to first child(age).
-	if e, g := true, nav.MoveToChild(); e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
-	if e, g := "age", nav.Current().Data; e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
-	if e, g := float64(30), nav.GetValue().(float64); e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
+	require.True(t, nav.MoveToChild())
+	require.Equal(t, "age", nav.Current().Data)
+	require.Equal(t, float64(30), nav.GetValue())
+
 	// Move to next sibling node(cars).
-	if e, g := true, nav.MoveToNext(); e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
-	if e, g := "cars", nav.Current().Data; e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
+	require.True(t, nav.MoveToNext())
+	require.Equal(t, "cars", nav.Current().Data)
+
 	m := make(map[string][]string)
 	// Move to cars child node.
 	cur := nav.Copy()
@@ -68,6 +61,7 @@ func TestNavigator(t *testing.T) {
 		for ok := nav.MoveToChild(); ok; ok = nav.MoveToNext() {
 			cur2 := nav.Copy()
 			n := nav.Current()
+			require.NotNil(t, n)
 			if n.Data == "name" {
 				name = n.InnerText()
 			} else {
@@ -85,45 +79,38 @@ func TestNavigator(t *testing.T) {
 
 	nav.MoveTo(cur)
 	// move to name.
-	if e, g := true, nav.MoveToNext(); e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
+	require.True(t, nav.MoveToNext())
 	// move to cars
-	nav.MoveToPrevious()
-	if e, g := "cars", nav.Current().Data; e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
+	require.True(t, nav.MoveToPrevious())
+	require.Equal(t, "cars", nav.Current().Data)
 	// move to age.
-	nav.MoveToFirst()
-	if e, g := "age", nav.Current().Data; e != g {
-		t.Fatalf("expected %v but %v", e, g)
-	}
+	require.True(t, nav.MoveToFirst())
+	require.Equal(t, "age", nav.Current().Data)
+
 	nav.MoveToParent()
-	if g := nav.Current().Type; g != DocumentNode {
-		t.Fatalf("node type is not DocumentNode")
-	}
+	require.Equal(t, DocumentNode, nav.Current().Type)
 }
 
 func TestToXML(t *testing.T) {
 	s := `{
 	"name":"John",
-	"age":31, 
-	"female":false 
+	"age":31,
+	"female":false
   }`
-	doc, _ := Parse(strings.NewReader(s))
+	doc, err := Parse(strings.NewReader(s))
+	require.NoError(t, err)
+
 	expected := `<?xml version="1.0" encoding="utf-8"?><root><age>31</age><female>false</female><name>John</name></root>`
-	if got := doc.OutputXML(); got != expected {
-		t.Fatalf("expected %s, but got %s", expected, got)
-	}
+	require.Equal(t, expected, doc.OutputXML())
 }
 
 func TestArrayToXML(t *testing.T) {
 	s := `[1,2,3,4]`
-	doc, _ := Parse(strings.NewReader(s))
+	doc, err := Parse(strings.NewReader(s))
+	require.NoError(t, err)
+
 	expected := `<?xml version="1.0" encoding="utf-8"?><root><1>1</1><2>2</2><3>3</3><4>4</4></root>`
-	if got := doc.OutputXML(); got != expected {
-		t.Fatalf("expected %s, but got %s", expected, got)
-	}
+	require.Equal(t, expected, doc.OutputXML())
 }
 
 func TestNestToArray(t *testing.T) {
@@ -146,53 +133,77 @@ func TestNestToArray(t *testing.T) {
 		  }
 		]
 	  }`
-	doc, _ := Parse(strings.NewReader(s))
+	doc, err := Parse(strings.NewReader(s))
+	require.NoError(t, err)
+
 	expected := `<?xml version="1.0" encoding="utf-8"?><root><address><city>Nara</city><postalCode>630-0192</postalCode><streetAddress>naist street</streetAddress></address><age>26</age><name>John</name><phoneNumbers><number>0123-4567-8888</number><type>iPhone</type></phoneNumbers><phoneNumbers><number>0123-4567-8910</number><type>home</type></phoneNumbers></root>`
-	if got := doc.OutputXML(); got != expected {
-		t.Fatalf("expected \n%s, but got \n%s", expected, got)
-	}
+	require.Equal(t, expected, doc.OutputXML())
 }
 
 func TestQuery(t *testing.T) {
 	doc, err := Parse(strings.NewReader(BooksExample))
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
+
 	q := "/store/bicycle"
 	n := FindOne(doc, q)
-	if n == nil {
-		t.Fatal("should matched 1 but got nil")
-	}
+	require.NotNil(t, n)
+
 	q = "/store/bicycle/color"
 	n = FindOne(doc, q)
-	if n == nil {
-		t.Fatal("should matched 1 but got nil")
-	}
-	if n.Data != "color" {
-		t.Fatalf("expected data is color, but got %s", n.Data)
-	}
+	require.NotNil(t, n)
+	require.Equal(t, "color", n.Data)
 }
 
 func TestQueryWhere(t *testing.T) {
 	doc, err := Parse(strings.NewReader(BooksExample))
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	// for number
 	q := "//*[price<=12.99]"
 	list := Find(doc, q)
-
-	if got, expected := len(list), 3; got != expected {
-		t.Fatalf("%s expected %d objects, but got %d", q, expected, got)
-	}
+	require.Len(t, list, 3)
 
 	// for string
 	q = "//*/isbn[text()='0-553-21311-3']"
-	if n := FindOne(doc, q); n == nil {
-		t.Fatal("should matched 1 but got nil")
-	} else if n.Data != "isbn" {
-		t.Fatalf("should matched `isbm` but got %s", n.Data)
+	n := FindOne(doc, q)
+	require.NotNil(t, n)
+	require.Equal(t, "isbn", n.Data)
+}
+
+func TestStringRepresentation(t *testing.T) {
+	s := `{
+		"a": "a string",
+		"b": 3.1415,
+		"c": true,
+		"d": {
+		  "d1": 1,
+		  "d2": "foo",
+		  "d3": true,
+		  "d4": null
+		},
+		"e": ["master", 42, true],
+		"f": 1690193829
+	}`
+	doc, err := Parse(strings.NewReader(s))
+	require.NoError(t, err)
+
+	expected := map[string]string{
+		"a": "a string",
+		"b": "3.1415",
+		"c": "true",
+		"d": `{"d1":1,"d2":"foo","d3":true,"d4":null}`,
+		"e": `["master",42,true]`,
+		"f": "1690193829",
+	}
+
+	nn := CreateXPathNavigator(doc)
+	hasData := nn.MoveToChild()
+	require.True(t, hasData)
+	for hasData {
+		require.NotNil(t, nn.Current())
+		name := nn.Current().Data
+		require.Equalf(t, expected[name], nn.Value(), "mismatch for node %q", name)
+		hasData = nn.MoveToNext()
 	}
 }
 

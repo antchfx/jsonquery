@@ -1,6 +1,7 @@
 package jsonquery
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/antchfx/xpath"
@@ -102,7 +103,14 @@ func (a *NodeNavigator) Prefix() string {
 }
 
 func (a *NodeNavigator) Value() string {
-	return fmt.Sprintf("%v", a.cur.value)
+	if v, ok := a.cur.value.(string); ok {
+		return v
+	}
+	buf, err := json.Marshal(a.cur.value)
+	if err != nil {
+		fmt.Sprintf("%v", a.cur.value)
+	}
+	return string(buf)
 }
 
 func (a *NodeNavigator) GetValue() interface{} {
