@@ -108,7 +108,8 @@ func (a *NodeNavigator) Value() string {
 	}
 	buf, err := json.Marshal(a.cur.value)
 	if err != nil {
-		fmt.Sprintf("%v", a.cur.value)
+		// Keep the raw value
+		return fmt.Sprintf("%v", a.cur.value)
 	}
 	return string(buf)
 }
