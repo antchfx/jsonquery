@@ -1,7 +1,6 @@
 # jsonquery
 
-[![Build Status](https://travis-ci.org/antchfx/jsonquery.svg?branch=master)](https://travis-ci.org/antchfx/jsonquery)
-[![Coverage Status](https://coveralls.io/repos/github/antchfx/jsonquery/badge.svg?branch=master)](https://coveralls.io/github/antchfx/jsonquery?branch=master)
+[![Build Status](https://github.com/antchfx/jsonquery/actions/workflows/testing.yml/badge.svg)](https://github.com/antchfx/jsonquery/actions/workflows/testing.yml)
 [![GoDoc](https://godoc.org/github.com/antchfx/jsonquery?status.svg)](https://godoc.org/github.com/antchfx/jsonquery)
 [![Go Report Card](https://goreportcard.com/badge/github.com/antchfx/jsonquery)](https://goreportcard.com/report/github.com/antchfx/jsonquery)
 
@@ -24,7 +23,6 @@ go get github.com/antchfx/jsonquery
 ## Get Started
 
 The below code may be help your understand what it does. We don't need pre-defined structure or using regexp to extract some data in JSON file, gets any data is easy and fast in jsonquery now.
-
 
 Using an xpath like syntax to access specific fields of a json structure.
 
@@ -62,13 +60,14 @@ func main() {
 	// or
 	age = jsonquery.FindOne(doc, "person/age")
 	fmt.Printf("%#v[%T]\n", age.Value(), age.Value()) // prints 31[float64]
-	
-	hobbies := jsonquery.FindOne(doc, "//hobbies") 
+
+	hobbies := jsonquery.FindOne(doc, "//hobbies")
 	fmt.Printf("%#v\n", hobbies.Value()) // prints []interface {}{"coding", "eating", "football"}
 	firstHobby := jsonquery.FindOne(doc, "//hobbies/*[1]")
 	fmt.Printf("%#v\n", firstHobby.Value()) // "coding"
 }
 ```
+
 Iterating over a json structure.
 
 ```go
@@ -158,16 +157,18 @@ for _, n := range list {
 	fmt.Print(n.Value().(float64))
 }
 ```
+
 // Output: `1,2,3,4,5,6`
 
 #### Convert JSON object to XML file
+
 ```go
 s := `[{"name":"John", "age":31, "female":false, "city":null}]`
 doc, _ := jsonquery.Parse(strings.NewReader(s))
 fmt.Println(doc.OutputXML())
 ```
 
-### Methods 
+### Methods
 
 #### FindOne()
 
@@ -259,7 +260,6 @@ Convert current JSON object to XML format.
   },
   "expensive": 10
 }
-
 ```
 
 ```go
@@ -317,20 +317,20 @@ Output the below XML:
 
 ## XPath Tests
 
-| Query    | Matched | Native Value Types | Native Values |
-| ------- | -------------| -------- | -------------|
-| `//book`      | 1     | []interface{} | `{"book": [{"id":1,... }, {"id":2,... }, {"id":3,... }, {"id":4,... }]}`   |
-| `//book/*`    | 4     | [map[string]interface{}] |`{"id":1,... }`, `{"id":2,... }`, `{"id":3,... }`, `{"id":4,... }` |
-| `//*[price<12.99]`    | 2    | [map[string]interface{}] | `{"id":1,...}`, `{"id":3,...}` | 
-| `//book/*/author` | 4 | []string | `{"author": "Nigel Rees"}`, `{"author": "Evelyn Waugh"}`, `{"author": "Herman Melville"}`, `{"author": "J. R. R. Tolkien"}` |
-| `//book/*[last()]` | 1 | map[string]interface {} | `{"id":4,...}` |
-| `//book/*[2]` | 1    | map[string]interface{} | `{"id":2,...}` |
-| `//*[isbn]` | 2  | [map[string]interface{}] | `{"id":3,"isbn":"0-553-21311-3",...}`,`{"id":4,"isbn":"0-395-19395-8",...}` |
-| `//*[isbn='0-553-21311-3']` | 1  | map[string]interface{} | `{"id":3,"isbn":"0-553-21311-3",...}` |
-| `//bicycle` | 1 | map[string]interface {}  | `{"bicycle":{"color":...,}}` |
-| `//bicycle/color[text()='red']` | 1 | map[string]interface {} |  `{"color":"red"}` |
-| `//*/category[contains(.,'refer')]` | 1 | string | `{"category": "reference"}` |
-| `//price[.=22.99]` | 1 | float64 | `{"price": 22.99}` |
-| `//expensive/text()` | 1 | string | `10` |
+| Query                               | Matched | Native Value Types       | Native Values                                                                                                               |
+| ----------------------------------- | ------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `//book`                            | 1       | []interface{}            | `{"book": [{"id":1,... }, {"id":2,... }, {"id":3,... }, {"id":4,... }]}`                                                    |
+| `//book/*`                          | 4       | [map[string]interface{}] | `{"id":1,... }`, `{"id":2,... }`, `{"id":3,... }`, `{"id":4,... }`                                                          |
+| `//*[price<12.99]`                  | 2       | [map[string]interface{}] | `{"id":1,...}`, `{"id":3,...}`                                                                                              |
+| `//book/*/author`                   | 4       | []string                 | `{"author": "Nigel Rees"}`, `{"author": "Evelyn Waugh"}`, `{"author": "Herman Melville"}`, `{"author": "J. R. R. Tolkien"}` |
+| `//book/*[last()]`                  | 1       | map[string]interface {}  | `{"id":4,...}`                                                                                                              |
+| `//book/*[2]`                       | 1       | map[string]interface{}   | `{"id":2,...}`                                                                                                              |
+| `//*[isbn]`                         | 2       | [map[string]interface{}] | `{"id":3,"isbn":"0-553-21311-3",...}`,`{"id":4,"isbn":"0-395-19395-8",...}`                                                 |
+| `//*[isbn='0-553-21311-3']`         | 1       | map[string]interface{}   | `{"id":3,"isbn":"0-553-21311-3",...}`                                                                                       |
+| `//bicycle`                         | 1       | map[string]interface {}  | `{"bicycle":{"color":...,}}`                                                                                                |
+| `//bicycle/color[text()='red']`     | 1       | map[string]interface {}  | `{"color":"red"}`                                                                                                           |
+| `//*/category[contains(.,'refer')]` | 1       | string                   | `{"category": "reference"}`                                                                                                 |
+| `//price[.=22.99]`                  | 1       | float64                  | `{"price": 22.99}`                                                                                                          |
+| `//expensive/text()`                | 1       | string                   | `10`                                                                                                                        |
 
 For more supports XPath feature and function see https://github.com/antchfx/xpath
