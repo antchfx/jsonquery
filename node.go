@@ -164,7 +164,7 @@ func parseValue(x interface{}, top *Node, level int) {
 	case []interface{}:
 		// JSON array
 		for _, vv := range v {
-			n := &Node{Data: top.Data, Type: ElementNode, level: level, value: vv}
+			n := &Node{Type: ElementNode, level: level, value: vv}
 			addNode(n)
 			parseValue(vv, n, level+1)
 		}
