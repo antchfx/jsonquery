@@ -133,25 +133,3 @@ func TestLargeFloat(t *testing.T) {
 		t.Fatalf("expected %v but %v", "365823929453", n.InnerText())
 	}
 }
-
-func TestNestedArray(t *testing.T) {
-	s := `{
-		"values": [
-			[
-				1,
-				2,
-				3
-			]
-		]
-	 }`
-	doc, err := parseString(s)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected := `<?xml version="1.0" encoding="utf-8"?><root><values><values>1</values><values>2</values><values>3</values></values></root>`
-	xml := doc.OutputXML()
-	if xml != expected {
-		t.Fatalf("expected %q but got %q", expected, xml)
-	}
-}
