@@ -4,12 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"reflect"
 	"sort"
 	"strings"
 )
+
+// An interface to provide custom json decoder
+type DecoderInterface interface {
+	Decode(v interface{}) error
+}
 
 // A NodeType is the type of a Node.
 type NodeType uint
@@ -189,9 +193,9 @@ func parseValue(x interface{}, top *Node, level int) {
 	}
 }
 
-func parse(b []byte) (*Node, error) {
+func parse(decoder DecoderInterface) (*Node, error) {
 	var v interface{}
-	if err := json.Unmarshal(b, &v); err != nil {
+	if err := decoder.Decode(&v); err != nil {
 		return nil, err
 	}
 	doc := &Node{Type: DocumentNode}
@@ -199,11 +203,17 @@ func parse(b []byte) (*Node, error) {
 	return doc, nil
 }
 
-// Parse JSON document.
+// Parse JSON document from Reader
 func Parse(r io.Reader) (*Node, error) {
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		return nil, err
-	}
-	return parse(b)
+	return parse(json.NewDecoder(r))
+}
+
+// Parse JSON document from bytes
+func ParseFromBytes(b []byte) (*Node, error) {
+	return parse(json.NewDecoder(strings.NewReader(string(b))))
+}
+
+// Parse JSON with custom decoder
+func ParseWithDecoder(decoder DecoderInterface) (*Node, error) {
+	return parse(decoder)
 }
