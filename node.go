@@ -51,8 +51,6 @@ func (n *Node) ChildNodes() []*Node {
 }
 
 // InnerText will gets the value of the node and all its child nodes.
-//
-// Deprecated: Use Value() to get JSON object value.
 func (n *Node) InnerText() string {
 	var output func(*strings.Builder, *Node)
 	output = func(b *strings.Builder, n *Node) {
