@@ -63,6 +63,34 @@ func TestParseJsonObject(t *testing.T) {
 	}
 }
 
+func TestTextNodeValuePreservesJSONType(t *testing.T) {
+	doc, err := parseString(`{"count": 12, "enabled": true, "name": "sensor"}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name  string
+		value interface{}
+		text  string
+	}{
+		{"count", float64(12), "12"},
+		{"enabled", true, "true"},
+		{"name", "sensor", "sensor"},
+	} {
+		parent := doc.SelectElement(tc.name)
+		if parent == nil || parent.FirstChild == nil || parent.FirstChild.Type != TextNode {
+			t.Fatalf("missing text node for %s", tc.name)
+		}
+		child := parent.FirstChild
+		if got := child.Value(); !reflect.DeepEqual(got, tc.value) {
+			t.Errorf("%s text value = %v (%T), want %v (%T)", tc.name, got, got, tc.value, tc.value)
+		}
+		if child.Data != tc.text || parent.InnerText() != tc.text {
+			t.Errorf("%s rendered text changed: data=%q inner=%q", tc.name, child.Data, parent.InnerText())
+		}
+	}
+}
+
 func TestParseJsonObjectArray(t *testing.T) {
 	s := `[
 		{"models":[ "Fiesta", "Focus", "Mustang" ] }

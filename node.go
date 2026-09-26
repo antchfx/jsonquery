@@ -182,7 +182,7 @@ func parseValue(x interface{}, top *Node, level int) {
 		}
 	default:
 		// JSON types: string, number, boolean
-		n := &Node{Data: fmt.Sprintf("%v", v), Type: TextNode, level: level, value: fmt.Sprintf("%v", v)}
+		n := &Node{Data: fmt.Sprintf("%v", v), Type: TextNode, level: level, value: v}
 		addNode(n)
 	}
 }
