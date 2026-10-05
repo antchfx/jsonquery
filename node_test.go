@@ -1,6 +1,7 @@
 package jsonquery
 
 import (
+	"encoding/xml"
 	"reflect"
 	"strings"
 	"testing"
@@ -159,5 +160,29 @@ func TestLargeFloat(t *testing.T) {
 	n := doc.SelectElement("large_number")
 	if n.Value() != float64(365823929453) {
 		t.Fatalf("expected %v but %v", "365823929453", n.InnerText())
+	}
+}
+
+func TestOutputXMLEscapesText(t *testing.T) {
+	doc, err := parseString(`{"a": "x < y && y > z", "b": ["<i>", "AT&T"]}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := doc.OutputXML()
+	want := `<?xml version="1.0" encoding="utf-8"?><root><a>x &lt; y &amp;&amp; y &gt; z</a><b>&lt;i&gt;</b><b>AT&amp;T</b></root>`
+	if out != want {
+		t.Fatalf("OutputXML() = %s, want %s", out, want)
+	}
+
+	// The output must be well-formed and decode back to the original text.
+	var v struct {
+		A string   `xml:"a"`
+		B []string `xml:"b"`
+	}
+	if err := xml.Unmarshal([]byte(out), &v); err != nil {
+		t.Fatalf("OutputXML() is not well-formed XML: %v", err)
+	}
+	if v.A != "x < y && y > z" || len(v.B) != 2 || v.B[0] != "<i>" || v.B[1] != "AT&T" {
+		t.Fatalf("decoded %+v", v)
 	}
 }
