@@ -67,10 +67,14 @@ func (n *Node) InnerText() string {
 	return b.String()
 }
 
+// xmlTextEscaper escapes the characters that are not allowed to appear
+// literally in XML character data.
+var xmlTextEscaper = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
+
 func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 	level++
 	if n.Type == TextNode {
-		b.WriteString(fmt.Sprintf("%v", n.value))
+		b.WriteString(xmlTextEscaper.Replace(fmt.Sprintf("%v", n.value)))
 		return
 	}
 	if v := reflect.ValueOf(n.value); v.Kind() == reflect.Slice {
