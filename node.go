@@ -137,6 +137,9 @@ func LoadURL(url string) (*Node, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return nil, fmt.Errorf("unexpected HTTP status: %s", resp.Status)
+	}
 	return Parse(resp.Body)
 }
 

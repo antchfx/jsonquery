@@ -2,10 +2,135 @@ package jsonquery
 
 import (
 	"encoding/xml"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
 )
+
+func TestLoadURLStatus(t *testing.T) {
+	for _, status := range []int{200, 201, 202, 206, 299, 300, 302, 304, 400, 401, 403, 404, 429, 500, 503} {
+		t.Run(fmt.Sprint(status), func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(status)
+				fmt.Fprint(w, `{"message":"response"}`)
+			}))
+			defer server.Close()
+
+			doc, err := LoadURL(server.URL)
+			if status >= 200 && status < 300 {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if got := doc.SelectElement("message"); got == nil || got.Value() != "response" {
+					t.Fatalf("unexpected document: %#v", doc)
+				}
+				return
+			}
+			if doc != nil || err == nil {
+				t.Fatalf("LoadURL = (%v, %v), want nil document and HTTP error", doc, err)
+			}
+			if !strings.Contains(err.Error(), fmt.Sprint(status)) {
+				t.Fatalf("error %q does not identify HTTP status %d", err, status)
+			}
+		})
+	}
+}
+
+func TestLoadURLRedirectStatus(t *testing.T) {
+	for _, status := range []int{http.StatusOK, http.StatusNotFound} {
+		t.Run(fmt.Sprint(status), func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/redirect" {
+					http.Redirect(w, r, "/document", http.StatusFound)
+					return
+				}
+				w.WriteHeader(status)
+				fmt.Fprint(w, `{"message":"redirected"}`)
+			}))
+			defer server.Close()
+
+			doc, err := LoadURL(server.URL + "/redirect")
+			if status == http.StatusOK {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if got := doc.SelectElement("message"); got == nil || got.Value() != "redirected" {
+					t.Fatalf("unexpected redirected document: %#v", doc)
+				}
+			} else if doc != nil || err == nil || !strings.Contains(err.Error(), fmt.Sprint(status)) {
+				t.Fatalf("LoadURL = (%v, %v), want final HTTP status %d", doc, err, status)
+			}
+		})
+	}
+}
+
+type loadURLTransport func(*http.Request) (*http.Response, error)
+
+func (f loadURLTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	return f(r)
+}
+
+type loadURLBody struct {
+	io.Reader
+	read, closed bool
+}
+
+func (b *loadURLBody) Read(p []byte) (int, error) {
+	b.read = true
+	return b.Reader.Read(p)
+}
+
+func (b *loadURLBody) Close() error {
+	b.closed = true
+	return nil
+}
+
+func TestLoadURLClosesBody(t *testing.T) {
+	client := http.DefaultClient
+	defer func() { http.DefaultClient = client }()
+	for _, tc := range []struct {
+		name    string
+		status  int
+		body    string
+		wantErr bool
+	}{
+		{"success", http.StatusOK, `{"message":"response"}`, false},
+		{"invalid JSON", http.StatusOK, `invalid`, true},
+		{"empty success", http.StatusNoContent, ``, true},
+		{"client error", http.StatusNotFound, `{"message":"missing"}`, true},
+		{"server error", http.StatusServiceUnavailable, `invalid`, true},
+		{"protocol upgrade", http.StatusSwitchingProtocols, `{"message":"response"}`, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			body := &loadURLBody{Reader: strings.NewReader(tc.body)}
+			http.DefaultClient = &http.Client{Transport: loadURLTransport(func(r *http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: tc.status,
+					Status:     fmt.Sprintf("%d %s", tc.status, http.StatusText(tc.status)),
+					Header:     make(http.Header),
+					Body:       body,
+					Request:    r,
+				}, nil
+			})}
+
+			doc, err := LoadURL("http://example.test/document")
+			if (err != nil) != tc.wantErr {
+				t.Fatalf("LoadURL = (%v, %v), want error: %v", doc, err, tc.wantErr)
+			}
+			if !body.closed {
+				t.Error("response body was not closed")
+			}
+			if (tc.status < 200 || tc.status >= 300) && body.read {
+				t.Error("HTTP error body was read")
+			}
+		})
+	}
+}
 
 func parseString(s string) (*Node, error) {
 	return Parse(strings.NewReader(s))
