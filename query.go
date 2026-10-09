@@ -148,6 +148,11 @@ func (a *NodeNavigator) MoveToChild() bool {
 }
 
 func (a *NodeNavigator) MoveToFirst() bool {
+	// Already on the first sibling. xmlquery and htmlquery return false
+	// here so a caller can tell the navigator did not move.
+	if a.cur.PrevSibling == nil {
+		return false
+	}
 	for n := a.cur.PrevSibling; n != nil; n = n.PrevSibling {
 		a.cur = n
 	}
