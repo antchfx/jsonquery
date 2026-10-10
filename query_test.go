@@ -22,6 +22,23 @@ func BenchmarkDisableSelectorCache(b *testing.B) {
 	}
 }
 
+func TestMoveToFirst(t *testing.T) {
+	doc, err := parseString(`{"a":1,"b":2}`)
+	require.NoError(t, err)
+
+	nav := CreateXPathNavigator(doc)
+	require.True(t, nav.MoveToChild())
+	require.Equal(t, "a", nav.Current().Data)
+	// Already on the first sibling. The move did not happen.
+	require.False(t, nav.MoveToFirst())
+	require.Equal(t, "a", nav.Current().Data)
+
+	require.True(t, nav.MoveToNext())
+	require.Equal(t, "b", nav.Current().Data)
+	require.True(t, nav.MoveToFirst())
+	require.Equal(t, "a", nav.Current().Data)
+}
+
 func TestNavigator(t *testing.T) {
 	s := `{
 		"name":"John",
