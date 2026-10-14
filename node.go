@@ -50,12 +50,25 @@ func (n *Node) ChildNodes() []*Node {
 	return a
 }
 
+// formatValue returns the text of a JSON string, number or boolean value.
+// Numbers are formatted the way encoding/json writes them, which is also the
+// string value that XPath expressions see. %v would write a number such as
+// 1000000 as 1e+06.
+func formatValue(v interface{}) string {
+	if f, ok := v.(float64); ok {
+		if b, err := json.Marshal(f); err == nil {
+			return string(b)
+		}
+	}
+	return fmt.Sprintf("%v", v)
+}
+
 // InnerText will gets the value of the node and all its child nodes.
 func (n *Node) InnerText() string {
 	var output func(*strings.Builder, *Node)
 	output = func(b *strings.Builder, n *Node) {
 		if n.Type == TextNode {
-			b.WriteString(fmt.Sprintf("%v", n.value))
+			b.WriteString(formatValue(n.value))
 			return
 		}
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
@@ -74,7 +87,7 @@ var xmlTextEscaper = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
 func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 	level++
 	if n.Type == TextNode {
-		b.WriteString(xmlTextEscaper.Replace(fmt.Sprintf("%v", n.value)))
+		b.WriteString(xmlTextEscaper.Replace(formatValue(n.value)))
 		return
 	}
 	if v := reflect.ValueOf(n.value); v.Kind() == reflect.Slice {
@@ -189,7 +202,7 @@ func parseValue(x interface{}, top *Node, level int) {
 		}
 	default:
 		// JSON types: string, number, boolean
-		n := &Node{Data: fmt.Sprintf("%v", v), Type: TextNode, level: level, value: v}
+		n := &Node{Data: formatValue(v), Type: TextNode, level: level, value: v}
 		addNode(n)
 	}
 }

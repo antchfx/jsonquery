@@ -311,3 +311,22 @@ func TestOutputXMLEscapesText(t *testing.T) {
 		t.Fatalf("decoded %+v", v)
 	}
 }
+
+func TestLargeNumberText(t *testing.T) {
+	doc, err := parseString(`{"a":1000000,"b":123456789,"c":-0.000001,"d":1.5}`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for key, want := range map[string]string{"a": "1000000", "b": "123456789", "c": "-0.000001", "d": "1.5"} {
+		n := FindOne(doc, "//"+key)
+		if n == nil {
+			t.Fatalf("//%s not found", key)
+		}
+		if got := n.InnerText(); got != want {
+			t.Errorf("//%s InnerText() = %q, want %q", key, got, want)
+		}
+	}
+	if got, want := doc.OutputXML(), `<?xml version="1.0" encoding="utf-8"?><root><a>1000000</a><b>123456789</b><c>-0.000001</c><d>1.5</d></root>`; got != want {
+		t.Errorf("OutputXML() = %q, want %q", got, want)
+	}
+}
