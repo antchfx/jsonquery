@@ -91,20 +91,20 @@ func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 		return
 	}
 	if v := reflect.ValueOf(n.value); v.Kind() == reflect.Slice {
+		tag := n.Data
+		if tag == "" {
+			tag = "element"
+		}
 		for child := n.FirstChild; child != nil; child = child.NextSibling {
-			b.WriteString("<" + n.Data + ">")
+			b.WriteString("<" + tag + ">")
 			outputXML(b, child, level, true)
-			b.WriteString("</" + n.Data + ">")
+			b.WriteString("</" + tag + ">")
 		}
 	} else {
 		d := n.Data
 		if !skip {
 			if d == "" {
-				if v := reflect.ValueOf(n.value); v.Kind() == reflect.Map {
-					d = "element"
-				} else {
-					d = fmt.Sprintf("%v", n.value)
-				}
+				d = "element"
 			}
 			b.WriteString("<" + d + ">")
 		}

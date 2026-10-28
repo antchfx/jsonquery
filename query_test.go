@@ -1,6 +1,7 @@
 package jsonquery
 
 import (
+	"encoding/xml"
 	"strings"
 	"testing"
 
@@ -126,8 +127,15 @@ func TestArrayToXML(t *testing.T) {
 	doc, err := Parse(strings.NewReader(s))
 	require.NoError(t, err)
 
-	expected := `<?xml version="1.0" encoding="utf-8"?><root><1>1</1><2>2</2><3>3</3><4>4</4></root>`
-	require.Equal(t, expected, doc.OutputXML())
+	output := doc.OutputXML()
+	var decoded struct {
+		Elements []string `xml:"element"`
+	}
+	require.NoError(t, xml.Unmarshal([]byte(output), &decoded))
+
+	expected := `<?xml version="1.0" encoding="utf-8"?><root><element>1</element><element>2</element><element>3</element><element>4</element></root>`
+	require.Equal(t, expected, output)
+	require.Equal(t, []string{"1", "2", "3", "4"}, decoded.Elements)
 }
 
 func TestNestToArray(t *testing.T) {
