@@ -55,6 +55,9 @@ func (n *Node) ChildNodes() []*Node {
 // string value that XPath expressions see. %v would write a number such as
 // 1000000 as 1e+06.
 func formatValue(v interface{}) string {
+	if v == nil {
+		return "null"
+	}
 	if f, ok := v.(float64); ok {
 		if b, err := json.Marshal(f); err == nil {
 			return string(b)
