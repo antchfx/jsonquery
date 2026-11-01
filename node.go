@@ -81,8 +81,9 @@ func (n *Node) InnerText() string {
 }
 
 // xmlTextEscaper escapes the characters that are not allowed to appear
-// literally in XML character data.
-var xmlTextEscaper = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
+// literally in XML character data. Carriage returns must be references because
+// XML parsers otherwise normalize them to line feeds.
+var xmlTextEscaper = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;", "\r", "&#13;")
 
 func outputXML(b *strings.Builder, n *Node, level int, skip bool) {
 	level++
