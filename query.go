@@ -3,6 +3,7 @@ package jsonquery
 import (
 	"encoding/json"
 	"fmt"
+	"unsafe"
 
 	"github.com/antchfx/xpath"
 )
@@ -186,4 +187,8 @@ func (a *NodeNavigator) MoveTo(other xpath.NodeNavigator) bool {
 	}
 	a.cur = node.cur
 	return true
+}
+
+func (a *NodeNavigator) Identity() uint64 {
+	return uint64(uintptr(unsafe.Pointer(a.cur)))
 }
